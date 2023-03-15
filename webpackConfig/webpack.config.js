@@ -98,6 +98,12 @@ module.exports = {
         use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
+        test: /\.less$/i,
+        use: [
+          MiniCssExtractPlugin.loader, "css-loader", 'less-loader',
+        ],
+      },
+      {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
         generator: {
@@ -150,6 +156,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    alias: {
+      '@pages': path.resolve(__dirname, '../src/pages'),
+      '@assets': path.resolve(__dirname, '../src/assets'),
+    }
   },
   //去掉打包资产大小限制警告
   performance: {

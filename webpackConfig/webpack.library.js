@@ -19,9 +19,6 @@ module.exports = merge(webpackConfig, {
   //排除指定包
   externals: {
     // lodash: {
-    //   commonjs: 'lodash',
-    //   commonjs2: 'lodash',
-    //   amd: 'lodash',
     //   root: '_',
     // },
   },

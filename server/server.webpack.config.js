@@ -3,8 +3,10 @@ const path = require('path');
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-
 const webpackConfig = require('../webpackConfig/webpack.config');
+const CONST = require('./const');
+
+let progressPluginType = false;
 module.exports = merge(webpackConfig, {
   mode: 'development',
   stats: "errors-only",
@@ -17,8 +19,16 @@ module.exports = merge(webpackConfig, {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new ReactRefreshWebpackPlugin(),
+    //全部变量
     new webpack.EnvironmentPlugin({
       WEBPACK_SERVER: true,
+    }),
+    new webpack.ProgressPlugin((percentage, message)=>{
+      if (!message && percentage == 1 && !progressPluginType) {
+        progressPluginType = true;
+        console.log(`<i> [webpack-dev-server] Loopback: http://localhost:${CONST.port}/`);
+        console.log(`<i> [webpack-dev-server] On Your Network (IPv4): http://${CONST.getLocalIP()}:${CONST.port}/`);
+      }
     }),
   ],
 });

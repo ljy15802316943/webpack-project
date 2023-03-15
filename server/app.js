@@ -2,6 +2,7 @@ const express = require('express');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
+const CONST = require('./const');
 
 const app = express();
 
@@ -18,6 +19,4 @@ app.use(
 );
 
 //将文件 serve 到 port 3000。
-app.listen(3000, function() {
-  console.log('http://localhost:3000/');
-});
+app.listen(CONST.port);
