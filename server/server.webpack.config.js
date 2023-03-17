@@ -19,10 +19,6 @@ module.exports = merge(webpackConfig, {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new ReactRefreshWebpackPlugin(),
-    //全部变量
-    new webpack.EnvironmentPlugin({
-      WEBPACK_SERVER: true,
-    }),
     new webpack.ProgressPlugin((percentage, message)=>{
       if (!message && percentage == 1 && !progressPluginType) {
         progressPluginType = true;

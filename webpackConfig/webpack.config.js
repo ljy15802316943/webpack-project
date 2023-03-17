@@ -7,7 +7,6 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin') //引入html-webpack-plugin 插件
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const ReactRefreshTypeScript = require('react-refresh-typescript');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
@@ -21,14 +20,8 @@ module.exports = {
   module: {
     rules: [
       {
-        // 当模块运行在 CommonJS 上下文中，这将会变成一个问题，也就是说此时的 this 指向的是 module.exports。
-        // 在这种情况下，你可以通过使用 imports-loader 覆盖 this 指向
-        test: path.resolve('../src/index.tsx'),
-        use: 'imports-loader?wrapper=window',
-      },
-      {
         test: /\.(js|ts|jsx|tsx)$/,
-        include: path.resolve(__dirname, '../src'),
+        include: path.resolve(__dirname, '../src'), 
         exclude: /node_modules/,
         use: [
           {
@@ -38,31 +31,24 @@ module.exports = {
                 [
                   "@babel/preset-env",
                   {
-                    "useBuiltIns": "usage",
-                    "corejs": {
-                      "version": 2
-                    },
                     "targets": {
                       "chrome": "60",
                       "firefox": "60",
-                      "ie": "9",
+                      "ie": "11",
                       "safari": "10",
                       "edge": "17"
-                    }
+                    },
+                    "corejs": {
+                      "version": 3
+                    },
+                    "useBuiltIns": "entry",
                   }
                 ],
                 ['@babel/preset-react'], // 通过preset-react 支持jsx
-                ['@babel/preset-typescript'] // 加上这一句
+                ['@babel/preset-typescript'] //支持ts
               ],
               plugins: [
                 isDevelopment && require.resolve('react-refresh/babel'),
-                [
-                  "@babel/plugin-transform-runtime", {
-                    "corejs": {
-                      "version": 2
-                    },
-                  }
-                ],
                 // 配置antd按需引入css。
                 [
                   "import",
@@ -79,22 +65,10 @@ module.exports = {
               .filter(Boolean)
             },
           },
-          {
-            loader: 'ts-loader',
-            options: {
-              getCustomTransformers: () => {
-                return ({
-                  before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
-                }) 
-              } ,
-              transpileOnly: isDevelopment,
-            },
-          },
         ],
       },
       {
         test: /\.css$/i,
-        include: path.resolve(__dirname, '../src'),
         use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
@@ -104,12 +78,33 @@ module.exports = {
         ],
       },
       {
+        // 当模块运行在 CommonJS 上下文中，这将会变成一个问题，也就是说此时的 this 指向的是 module.exports。
+        // 在这种情况下，你可以通过使用 imports-loader 覆盖 this 指向
+        test: path.resolve('../src/index.tsx'),
+        use: 'imports-loader?wrapper=window',
+      },
+      {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
         generator: {
           publicPath: './images/',
           outputPath: 'images',
         },
+      },
+      {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'babel-loader',
+          },
+          {
+            loader: '@svgr/webpack',
+            options: {
+              babel: false,
+              icon: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,

@@ -1,2 +1,3 @@
-node_modules
 dist
+library-dist
+node_modules
